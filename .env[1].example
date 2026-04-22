@@ -1,0 +1,12 @@
+# TruthLens — Environment Variables
+# Copy this file to .env and fill in your values
+
+# Your Anthropic API key (get one at https://console.anthropic.com)
+ANTHROPIC_API_KEY=sk-ant-your-key-here
+
+# Port to run the server on (default: 3000)
+PORT=3000
+
+# Your frontend domain for CORS (use * during development, set to your domain in production)
+# Example: https://truthlens.com
+ALLOWED_ORIGIN=*
