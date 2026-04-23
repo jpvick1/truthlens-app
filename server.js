@@ -16,7 +16,7 @@ const multer = require('multer');
 const fetch = require('node-fetch'); // npm install node-fetch@2
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3080;
 
 // ── Middleware ─────────────────────────────────────────────────────────────────
 
