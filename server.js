@@ -25,7 +25,7 @@ app.use(cors({
 }));
 
 app.use(express.json({ limit: '20mb' }));
-app.use(express.static('public')); // Serve your frontend HTML from /public folder
+app.use(express.static(__dirname + '/public')); // Serve your frontend HTML from /public folder
 
 // Rate limiting — 20 requests per user per 15 minutes
 const limiter = rateLimit({
