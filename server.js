@@ -53,7 +53,7 @@ app.post('/api/analyze', upload.single('image'), async (req, res) => {
     });
 
     const data = await response.json();
-    const text = data.content.map(function(b) { return b.text || ''; }).join('');
+    console.log('API response:', JSON.stringify(data)); if (!data.content) throw new Error('No content in response: ' + JSON.stringify(data)); const text = data.content.map(function(b) { return b.text || ''; }).join('');
     const clean = text.replace(/```json|```/g, '').trim();
     res.json(JSON.parse(clean));
 
