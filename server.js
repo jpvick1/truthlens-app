@@ -26,7 +26,9 @@ app.use(cors({
 
 app.use(express.json({ limit: '20mb' }));
 app.use(express.static(__dirname + '/public')); // Serve your frontend HTML from /public folder
-
+app.get('/', (req, res) => {
+     res.sendFile(__dirname + '/public/ai-detector-app.html');
+   });
 // Rate limiting — 20 requests per user per 15 minutes
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
