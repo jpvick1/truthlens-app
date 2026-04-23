@@ -20,6 +20,8 @@ app.post('/api/analyze', upload.single('image'), async (req, res) => {
     const base64Image = req.file.buffer.toString('base64');
     const mediaType = req.file.mimetype;
 
+    const prompt = 'You are an AI image forensics expert. Analyze this image and determine if it is AI-generated or a real photograph. Respond ONLY with a valid JSON object with these exact fields: score (integer 0-100 where 0=real and 100=AI), verdict (one of: Likely real, Possibly AI, Likely AI, Almost certainly AI), signals (array of objects with label, detail, and type fields where type is ai or real or neutral), summary (2-3 sentence assessment). Include 4-5 signals.';
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -33,5 +35,33 @@ app.post('/api/analyze', upload.single('image'), async (req, res) => {
         messages: [{
           role: 'user',
           content: [
-            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Image } },
-            { type: 'text', text: 'Analyze if this image is AI-generated. Respond ONLY with JSON: {"score": 0-100, "verdic
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: mediaType,
+                data: base64Image
+              }
+            },
+            {
+              type: 'text',
+              text: prompt
+            }
+          ]
+        }]
+      }),
+    });
+
+    const data = await response.json();
+    const text = data.content.map(function(b) { return b.text || ''; }).join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    res.json(JSON.parse(clean));
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.listen(PORT, '0.0.0.0', function() {
+  console.log('TruthLens running on port ' + PORT);
+});
