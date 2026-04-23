@@ -58,6 +58,7 @@ app.post('/api/analyze', upload.single('image'), async (req, res) => {
     res.json(JSON.parse(clean));
 
   } catch (err) {
+    console.error('Full error:', err);
     res.status(500).json({ error: err.message });
   }
 });
