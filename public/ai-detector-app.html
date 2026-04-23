@@ -613,7 +613,7 @@ async function extractVideoFrame(file) {
   });
 }
 
-async function handleFile(file) {
+async function handleFile_old(file) {
   show('analyzing-section');
   const isVideo = file.type.startsWith('video/');
   let imageFile = file;
@@ -715,6 +715,44 @@ function renderResult(data, imageFile, isVideo) {
 
   document.getElementById('summary-text').textContent = data.summary || '';
   show('result-section');
+}
+ async function handleFile(file) {
+  show('analyzing-section');
+  const isVideo = file.type.startsWith('video/');
+  let imageFile = file;
+
+  if (isVideo) {
+    try {
+      const frameBlob = await extractVideoFrame(file);
+      imageFile = frameBlob;
+    } catch(e) {
+      show('error-section');
+      document.getElementById('error-msg').textContent = 'Could not extract video frame.';
+      return;
+    }
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append('image', imageFile, 'upload.jpg');
+
+    const response = await fetch('/api/analyze', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || 'Server error');
+    }
+
+    const parsed = await response.json();
+    renderResult(parsed, imageFile, isVideo);
+
+  } catch(err) {
+    show('error-section');
+    document.getElementById('error-msg').textContent = 'Analysis failed: ' + err.message;
+  }
 }
 </script>
 </body>
